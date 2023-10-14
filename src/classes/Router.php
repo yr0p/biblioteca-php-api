@@ -1,45 +1,49 @@
 <?php
 namespace src\classes;
 
+use src\helpers\ExecuteController;
+
 class Router
 {
     private $routes = [
         0 =>[
-            'method' => 'GET',
+            'httpMethod' => 'GET',
             'route' => '/',
-            'controller' => 'IndexController'
+            'controller' => 'IndexController',
+            'action' => 'welcome'
         ]
     ];
 
-    public function add($method, $rota, $controller)
+    public function add($httpMethod, $rota, $controller, $action)
     {
         array_push($this->routes, [
-            'method' => $method,
+            'httpMethod' => $httpMethod,
             'route' => $rota,
-            'controller' => $controller
+            'controller' => $controller,
+            'action' => $action
         ]);
     }
-    public function get($rota, $controller)
+    public function get($rota, $controller, $action)
     {
-        $this->add('GET', $rota, $controller);
+        $this->add('GET', $rota, $controller, $action);
     }
-    public function post($rota, $controller){
-        $this->add('POST', $rota, $controller);
+    public function post($rota, $controller, $action){
+        $this->add('POST', $rota, $controller, $action);
     }
-    public function put($rota, $controller)
+    public function put($rota, $controller, $action)
     {
-        $this->add('PUT', $rota, $controller);
+        $this->add('PUT', $rota, $controller, $action);
     }
-    public function delete($rota, $controller)
+    public function delete($rota, $controller, $action)
     {
-        $this->add('DELETE', $rota, $controller);
+        $this->add('DELETE', $rota, $controller, $action);
     }
     public function route($rota, $method)
     {
         foreach($this->routes as $route){
-            if($route['route'] == $rota && $route['method'] == $method)
+            if($route['route'] == $rota && $route['httpMethod'] == $method)
             {
-                include_once './src/controllers/'. $route['controller'] . '.php';
+               ExecuteController::run($route["controller"], $route["action"]);
             }
         }
     }

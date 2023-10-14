@@ -1,11 +1,9 @@
 <?php
 namespace src\controllers;
 
-use src\interfaces\IController;
-
-class IndexController implements IController
+class IndexController
 {
-    public static function run()
+    public static function welcome()
     {
         header("Content-type: application/json;");
         echo json_encode([
@@ -15,10 +13,8 @@ class IndexController implements IController
                 "main" => "https://github.com/pablioRichardy",
                 "alternnative" => "https://github.com/yr0p"
                 ],
-                "API" => ""
+                'API' => ''
             ]
         ]);
     }
 }
-
-IndexController::run();

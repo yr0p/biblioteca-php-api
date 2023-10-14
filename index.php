@@ -14,9 +14,8 @@ $cleanURL = URICleaner::cleanURL($_SERVER['REQUEST_URI']);
 $route = new Router();
 
 // Criando as Rotas
-$route->get('/', 'IndexController');
-$route->get('/index.php', 'IndexController');
-$route->post('/livro', 'IndexController');
+$route->get('/index.php', 'IndexController', 'welcome');
+$route->post('/register', 'UsuariosController', 'register');
 
 
 // Passando as requisições
