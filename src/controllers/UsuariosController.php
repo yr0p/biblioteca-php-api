@@ -1,38 +1,50 @@
 <?php
 namespace src\controllers;
 
-use src\helpers\MensagemErro;
+use src\classes\Auth;
+
+use src\helpers\Mensagem;
+use src\helpers\Sanitaze;
+use src\helpers\Verifications;
+use src\helpers\MensagemSucesso;
+
+use src\models\Usuario;
 
 class UsuariosController
 {
-    public function register(){
+    public function register()
+    {
         $data = json_decode(file_get_contents('php://input'), true);
 
-        if(empty($data["nome"]) || empty($data["email"]) || empty($data["usuario"]) || empty($data["senha"])){
-            
-        }
-
-        $nome = $data["nome"];
+        $name = $data["name"];
         $email = $data["email"];
-        $user = $data["usuario"];
-        $senha = $data["senha"];
+        $user = $data["user"];
+        $password = $data["password"];
+        $passwordConfirm = $data["passwordConfirm"];
 
-        if((strlen($nome) > 100) || (strlen($email) > 100) || (strlen($user) > 100) || (strlen($senha) > 100)){
-            MensagemErro::mostrarMensagem(400, "Alguns dos dados estão excedendo o limite de 100 caracteres!");
-        }
-        if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
-            MensagemErro::mostrarMensagem(400, "O email é invalido!");
-        }
-        if(strlen($senha) <= 8){
-            MensagemErro::mostrarMensagem(400, "Senha inválida! Digite um senha maior que 8 caracteres!");
-        }
+        $verifica = new Verifications();
+        $verifica->isEmpty($user, $password, $passwordConfirm, $email, $name);
+        $verifica->charsLimite($user, $password, $passwordConfirm, $email, $name);
+        $verifica->email($email);
+        $verifica->password($password, $passwordConfirm);
 
-        $nome = preg_replace('/[()=;]/', '', filter_var($nome, FILTER_SANITIZE_SPECIAL_CHARS));
-        $email = htmlspecialchars($email, ENT_HTML5);
-        $user = preg_replace('/[()=;]/', '', filter_var($nome, FILTER_SANITIZE_SPECIAL_CHARS));
-        $senha = preg_replace('/[()=;]/', '', filter_var($nome, FILTER_SANITIZE_SPECIAL_CHARS));
+        $data = Sanitaze::limpar($user, $password, $passwordConfirm, $email, $name);
 
-        var_dump($nome);
+        $usuario = new Usuario();
+        $usuario->create($data["name"], $data["user"], $data["user"], $data["password"]);
+        Mensagem::mostrarMensagem(new MensagemSucesso, 200, "Usuário cadastrado com sucesso!");
+    }
+    public function login()
+    {
+        $data = json_decode(file_get_contents('php://input'), true);
 
+        $user = $data["user"];
+        $password = $data["password"];
+        $userTable = new Usuario();
+        $auth = new Auth();
+
+        $data = $userTable->read($user, $password);
+        
+        $auth->create($data);
     }
 }

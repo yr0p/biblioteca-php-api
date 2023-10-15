@@ -16,7 +16,7 @@ $route = new Router();
 // Criando as Rotas
 $route->get('/index.php', 'IndexController', 'welcome');
 $route->post('/register', 'UsuariosController', 'register');
-
+$route->post('/auth', 'UsuariosController', 'login');
 
 // Passando as requisições
 $method = $_SERVER['REQUEST_METHOD'];

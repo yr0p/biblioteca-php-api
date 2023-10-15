@@ -1,17 +1,40 @@
 <?php
-use src\helpers\Connection;
+namespace src\models;
 
-class Usuario{
-    public static function create($nome, $email, $usuario, $senha){
+use src\helpers\Connection;
+use src\helpers\Mensagem;
+use src\helpers\MensagemErro;
+
+class Usuario
+{
+    public function create($nome, $email, $usuario, $senha)
+    {
+        $data = $this->read($usuario);
+
+        if($data = null)
+        {
+            Mensagem::mostrarMensagem(new MensagemErro, 400, "O user fornecido já está em uso!");
+        }
         return Connection::connect()->query('INSERT INTO usuarios(nome, email, usuario, senha) VALUES("'. $nome. '", "'. $email . '", "' . $usuario . '", "'. $senha . '")');
+
     }
-    public static function read($nome, $email, $usuario, $senha){
-        //return Connection::connect()->query('INSERT INTO usuarios(nome, email, usuario, senha) VALUES("'. $nome. '", "'. $email . '", "' . $usuario . '", "'. $senha . '")');
+    public function read($usuario, $senha = true)
+    {
+        $data = Connection::connect()->query('SELECT * FROM usuarios');
+        $data = $data->fetchAll(\PDO::FETCH_ASSOC);
+        $result = null;
+        foreach($data as $user)
+        {
+            if($user['usuario'] == $usuario && $user['senha'] == $senha)
+            {
+                $result = $user;
+            }
+        }
+        if($result == null)
+        {
+            Mensagem::mostrarMensagem(new MensagemErro, 400, "User ou Password não existe!");
+        }
+        return $result;
     }
-    public static function update($nome, $email, $usuario, $senha){
-        //return Connection::connect()->query('INSERT INTO usuarios(nome, email, usuario, senha) VALUES("'. $nome. '", "'. $email . '", "' . $usuario . '", "'. $senha . '")');
-    }
-    public static function delete($nome, $email, $usuario, $senha){
-        //return Connection::connect()->query('INSERT INTO usuarios(nome, email, usuario, senha) VALUES("'. $nome. '", "'. $email . '", "' . $usuario . '", "'. $senha . '")');
-    }
+    
 }

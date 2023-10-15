@@ -3,12 +3,12 @@ namespace src\helpers;
 
 use src\interfaces\IMensagem;
 
-class MensagemErro implements IMensagem{
+class MensagemSucesso implements IMensagem{
     public static function mostrarMensagem($code, $mensagem){
         http_response_code($code);
-        die(json_encode([
+        echo json_encode([
             "status" => $code,
-            "message" => $mensagem
-        ]));
+            "mensagem" => $mensagem
+        ]);
     }
 }

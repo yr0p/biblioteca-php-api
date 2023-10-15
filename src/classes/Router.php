@@ -1,58 +1,63 @@
 <?php
 namespace src\classes;
 
-use src\helpers\ExecuteController;
-
 class Router
 {
     private $routes = [
-        0 =>[
+        0 => [
             'httpMethod' => 'GET',
             'route' => '/',
             'controller' => 'IndexController',
-            'action' => 'welcome'
+            'methodController' => 'welcome'
         ]
     ];
 
-    public function add($httpMethod, $rota, $controller, $action)
+    public function add($httpMethod, $rota, $controller, $methodController)
     {
         array_push($this->routes, [
             'httpMethod' => $httpMethod,
             'route' => $rota,
             'controller' => $controller,
-            'action' => $action
+            'methodController' => $methodController
         ]);
     }
-    public function get($rota, $controller, $action)
+    public function get($route, $controller, $methodController)
     {
-        $this->add('GET', $rota, $controller, $action);
+        $this->add('GET', $route, $controller, $methodController);
     }
-    public function post($rota, $controller, $action){
-        $this->add('POST', $rota, $controller, $action);
-    }
-    public function put($rota, $controller, $action)
+    public function post($route, $controller, $methodController)
     {
-        $this->add('PUT', $rota, $controller, $action);
+        $this->add('POST', $route, $controller, $methodController);
     }
-    public function delete($rota, $controller, $action)
+    public function put($route, $controller, $methodController)
     {
-        $this->add('DELETE', $rota, $controller, $action);
+        $this->add('PUT', $route, $controller, $methodController);
     }
-    public function route($rota, $method)
+    public function delete($route, $controller, $methodController)
     {
-        foreach($this->routes as $route){
-            if($route['route'] == $rota && $route['httpMethod'] == $method)
+        $this->add('DELETE', $route, $controller, $methodController);
+    }
+    public function route($route, $method)
+    {
+        foreach($this->routes as $rt){
+            if($rt['route'] == $route && $rt['httpMethod'] == $method)
             {
-               ExecuteController::run($route["controller"], $route["action"]);
+               $this->run($rt["controller"], $rt["methodController"]);
             }
         }
     }
-    public function changeDefaultRoute($rota, $controller)
+    public function changeDefaultRoute($route, $controller)
     {
         $this->routes[0] = [
             'method' => 'GET',
-            'route' => $rota,
+            'route' => $route,
             'controller' => $controller
         ];
+    }
+    private static function run($controller, $method)
+    {
+        $class = new \ReflectionClass('src\controllers\\' . $controller);
+        $class = $class->newInstance();
+        $class->$method();
     }
 }
