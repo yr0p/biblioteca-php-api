@@ -9,16 +9,15 @@ class Usuario
 {
     public function create($nome, $email, $usuario, $senha)
     {
-        $data = $this->read($usuario);
-
-        if($data = null)
+        $data = Connection::connect()->query("SELECT * FROM usuarios WHERE usuario = '$usuario'");
+        if($data->rowCount() > 0)
         {
             Mensagem::mostrarMensagem(new MensagemErro, 400, "O user fornecido já está em uso!");
         }
         return Connection::connect()->query('INSERT INTO usuarios(nome, email, usuario, senha) VALUES("'. $nome. '", "'. $email . '", "' . $usuario . '", "'. $senha . '")');
 
     }
-    public function read($usuario, $senha = true)
+    public function read($usuario, $senha)
     {
         $data = Connection::connect()->query('SELECT * FROM usuarios');
         $data = $data->fetchAll(\PDO::FETCH_ASSOC);

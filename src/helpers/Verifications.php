@@ -5,9 +5,9 @@ use src\helpers\Mensagem;
 
 class Verifications
 {
-    public function isEmpty($user, $password, $passwordConfirm = "N", $email = "N", $name = "N", ) 
+    public function isEmpty($data) 
     {
-        if(empty($name) || empty($email) || empty($user) || empty($password) || empty($passwordConfirm))
+        if(empty($data["name"]) || empty($data["email"]) || empty($data["user"]) || empty($data["password"]) || empty($data["passwordConfirm"]))
         {
             Mensagem::mostrarMensagem(new MensagemErro, 400, "Por favor! Preencha seus dados.");
         }
@@ -26,7 +26,6 @@ class Verifications
     }
     public function password($password, $passwordConfirm = true)
     {
-        echo "hi";
         if($password <= 8 || $password != $passwordConfirm)
         {
             Mensagem::mostrarMensagem(new MensagemErro, 400, "Dados Inválidos! User ou Password inválidos!");

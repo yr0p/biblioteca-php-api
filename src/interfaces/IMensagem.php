@@ -2,6 +2,7 @@
 
 namespace src\interfaces;
 
-interface IMensagem{
+interface IMensagem
+{
     public static function mostrarMensagem($code, $mensagem);
 }

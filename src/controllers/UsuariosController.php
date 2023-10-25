@@ -2,7 +2,6 @@
 namespace src\controllers;
 
 use src\classes\Auth;
-
 use src\helpers\Mensagem;
 use src\helpers\Sanitaze;
 use src\helpers\Verifications;
@@ -12,9 +11,11 @@ use src\models\Usuario;
 
 class UsuariosController
 {
-    public function register()
+    public function registerUser()
     {
         $data = json_decode(file_get_contents('php://input'), true);
+        $verifica = new Verifications();
+        $verifica->isEmpty($data);
 
         $name = $data["name"];
         $email = $data["email"];
@@ -22,16 +23,13 @@ class UsuariosController
         $password = $data["password"];
         $passwordConfirm = $data["passwordConfirm"];
 
-        $verifica = new Verifications();
-        $verifica->isEmpty($user, $password, $passwordConfirm, $email, $name);
         $verifica->charsLimite($user, $password, $passwordConfirm, $email, $name);
         $verifica->email($email);
         $verifica->password($password, $passwordConfirm);
 
-        $data = Sanitaze::limpar($user, $password, $passwordConfirm, $email, $name);
-
+        $data = Sanitaze::limpar($user, $password, $email, $name);
         $usuario = new Usuario();
-        $usuario->create($data["name"], $data["user"], $data["user"], $data["password"]);
+        $usuario->create($data["name"], $data["email"], $data["user"], $data["password"]);
         Mensagem::mostrarMensagem(new MensagemSucesso, 200, "Usuário cadastrado com sucesso!");
     }
     public function login()
@@ -45,6 +43,16 @@ class UsuariosController
 
         $data = $userTable->read($user, $password);
         
-        $auth->create($data);
+        $auth->create($user);
+    }
+    public function getUser()
+    {
+        $headers = getallheaders();
+        $token = $headers['Authorization'];
+        $auth = new Auth();
+        $data = $auth->decode($token, getenv("SECRET"));
+        
+        echo $data["user"];
+
     }
 }

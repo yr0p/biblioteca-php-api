@@ -1,6 +1,9 @@
 <?php
 namespace src\classes;
 
+use src\helpers\Mensagem;
+use src\helpers\MensagemErro;
+
 class Router
 {
     private $routes = [
@@ -37,15 +40,6 @@ class Router
     {
         $this->add('DELETE', $route, $controller, $methodController);
     }
-    public function route($route, $method)
-    {
-        foreach($this->routes as $rt){
-            if($rt['route'] == $route && $rt['httpMethod'] == $method)
-            {
-               $this->run($rt["controller"], $rt["methodController"]);
-            }
-        }
-    }
     public function changeDefaultRoute($route, $controller)
     {
         $this->routes[0] = [
@@ -54,10 +48,42 @@ class Router
             'controller' => $controller
         ];
     }
-    private static function run($controller, $method)
+    public function matchRoute()
+    {
+        $URI = $_SERVER['REQUEST_URI'];
+        $method = $_SERVER['REQUEST_METHOD'];
+
+        $URI = str_replace('/api.biblioteca', '', $URI);
+
+        foreach($this->routes as $route)
+        {
+            $regex = str_replace('/', '\/', ltrim($route["route"], '/'));
+            
+            if(preg_match("/^$regex$/", ltrim($URI, '/'), $matches) && $route["httpMethod"] == $method)
+            {
+                $argRoute = explode('/', $route["route"]);
+                $argRequest = explode('/', $matches[0]);
+
+                $arg = array_diff($argRequest, $argRoute);
+                
+                return $this->run($route['controller'], $route['methodController'], $arg);
+            }else if($route["route"] == $URI)
+            {
+                return $this->run($route["controller"], $route["methodController"]);
+            }
+        }
+
+        Mensagem::mostrarMensagem(new MensagemErro, 400, "Página não encontrada!");
+        
+    }
+    private function run($controller, $method, $arg = null)
     {
         $class = new \ReflectionClass('src\controllers\\' . $controller);
         $class = $class->newInstance();
-        $class->$method();
+        if($arg == null)
+        {
+            return $class->$method();
+        }
+        return $class->$method($arg);
     }
 }

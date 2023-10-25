@@ -3,20 +3,22 @@ namespace src\classes;
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+use src\helpers\Mensagem;
+use src\helpers\MensagemErro;
 
 class Auth
 {
-    public function create($data)
+    public function create($user)
     {
-        $token = $this->generateToken($data, getenv('SECRET'));
+        $token = $this->generateToken($user, getenv('SECRET'));
         echo json_encode(["token" => $token]);
     }
-    private function generateToken($data, $secret) 
+    private function generateToken($user, $secret) 
     {  
         $payload = [
-            "usuario" => $data["usuario"],
+            "user" => $user,
             "iat" => time(),
-            "exp" => time() + 10
+            "exp" => time() + 60
         ];
 
         $jwt = JWT::encode($payload, $secret, 'HS256');
@@ -29,8 +31,7 @@ class Auth
             return $data;
         }
         catch(\Throwable $e){
-            return $e->getMessage();
-            
+            Mensagem::mostrarMensagem(new MensagemErro, 400, "Usuário não autenticado!");
         }
         
     }

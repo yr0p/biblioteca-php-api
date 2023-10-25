@@ -18,22 +18,14 @@ class Livro
         return Connection::connect()->query('INSERT INTO livros(titulo, autor, data_lancamento, quantidade_paginas, descricao, imagem_capa) VALUES("'. $titulo. '", "'. $autor . '", "' . $dataLancamento . '", "'. $quantidadePaginas . '")');
 
     }
-    public function read($titulo)
-    {
-        $data = Connection::connect()->query('SELECT * FROM usuarios');
+    public function read($titulo )
+    {   
+        $data = Connection::connect()->query("SELECT * FROM livros WHERE titulo LIKE '%$titulo%'");
         $data = $data->fetchAll(\PDO::FETCH_ASSOC);
-        $result = null;
-        foreach($data as $livro)
-        {
-            if($livro['titulo'] == $titulo)
-            {
-                $result = $livro;
-            }
+        
+        if(empty($data[0])){
+            Mensagem::mostrarMensagem(new MensagemErro, 400, 'Livro não encontrado!');
         }
-        if($result == null)
-        {
-            Mensagem::mostrarMensagem(new MensagemErro, 400, "Livro não existe!");
-        }
-        return $result;
+        return $data;
     }
 }

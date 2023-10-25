@@ -8,16 +8,25 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Headers: *');
 
 $dotenv = new Dotenv\Dotenv("src");
-$dotenv->load();
-
-$cleanURL = URICleaner::cleanURL($_SERVER['REQUEST_URI']);
 $route = new Router();
+$cleanURL = URICleaner::cleanURL($_SERVER['REQUEST_URI']);
+$method = $_SERVER['REQUEST_METHOD'];
+
+// Carregando .env
+$dotenv->load();
 
 // Criando as Rotas
 $route->get('/index.php', 'IndexController', 'welcome');
-$route->post('/register', 'UsuariosController', 'register');
+
+$route->post('/register', 'UsuariosController', 'registerUser');
 $route->post('/auth', 'UsuariosController', 'login');
+$route->get('/auth', 'UsuarioController', 'getUser');
+
+$route->post('/livros', 'LivrosController', 'registerBook');
+$route->get('/livros/([a-zA-Z]+-?)+', 'LivrosController', 'livros');
+
+$route->get('/minhaBiblioteca', 'MinhaBibliotecaController', 'meusLivros');
+$route->post('/minhaBiblioteca', 'MinhaBibliotecaController', 'alugar');
 
 // Passando as requisições
-$method = $_SERVER['REQUEST_METHOD'];
-$route->route($cleanURL, $method);
+$route->matchRoute();
