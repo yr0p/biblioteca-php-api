@@ -10,7 +10,7 @@ class MensagemSucesso implements IMensagem
         http_response_code($code);
         echo json_encode([
             "status" => $code,
-            "mensagem" => $mensagem
+            "message" => $mensagem
         ]);
     }
 }

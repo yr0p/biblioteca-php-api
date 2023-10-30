@@ -11,14 +11,18 @@ class Auth
     public function create($user)
     {
         $token = $this->generateToken($user, getenv('SECRET'));
-        echo json_encode(["token" => $token]);
+        echo json_encode([
+            "status" => 200,
+            "token" => $token,
+            "message" => "Usuário logado!"
+        ]);
     }
     private function generateToken($user, $secret) 
     {  
         $payload = [
             "user" => $user,
             "iat" => time(),
-            "exp" => time() + 60
+            "exp" => time() + (60 * 60)
         ];
 
         $jwt = JWT::encode($payload, $secret, 'HS256');

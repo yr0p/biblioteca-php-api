@@ -4,8 +4,16 @@ require_once 'vendor/autoload.php';
 use src\classes\URICleaner;
 use src\classes\Router;
 
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    header('Access-Control-Allow-Origin: *'); // Ou substitua * pelo domínio permitido
+    header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS'); // Inclua todos os métodos suportados
+    header('Access-Control-Allow-Headers: Content-Type, Authorization'); // Inclua todos os cabeçalhos necessários
+
+    // Encerre a execução do script PHP para evitar que o código principal seja executado
+    exit;
+}
+
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Headers: *');
 
 $dotenv = new Dotenv\Dotenv("src");
 $route = new Router();
@@ -20,13 +28,17 @@ $route->get('/index.php', 'IndexController', 'welcome');
 
 $route->post('/register', 'UsuariosController', 'registerUser');
 $route->post('/auth', 'UsuariosController', 'login');
-$route->get('/auth', 'UsuarioController', 'getUser');
 
-$route->post('/livros', 'LivrosController', 'registerBook');
+$route->post('/user', 'UsuariosController', 'getUser');
+
+$route->post('/registerBook', 'LivrosController', 'registerBook');
+$route->get('/livros', 'LivrosController', 'verLivros');
+$route->put('/livros', 'LivrosController', 'updateBook');
 $route->get('/livros/([a-zA-Z]+-?)+', 'LivrosController', 'livros');
+$route->delete('/livros/([a-zA-Z]+-?)+', 'LivrosController', 'deleteBook');
 
 $route->get('/minhaBiblioteca', 'MinhaBibliotecaController', 'meusLivros');
-$route->post('/minhaBiblioteca', 'MinhaBibliotecaController', 'alugar');
+$route->post('/minhaBiblioteca', 'MinhaBibliotecaController', 'reservar');
 
 // Passando as requisições
 $route->matchRoute();

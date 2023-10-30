@@ -18,6 +18,9 @@ Nome do usuário logado
 ### /livros (POST)
 Registrar livro
 
+### /livros (GET)
+Pega todos os livros
+
 ### /livros/{nome-do-livro} (GET) 
 Pega livro
 

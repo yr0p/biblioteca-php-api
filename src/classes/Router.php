@@ -1,6 +1,5 @@
 <?php
 namespace src\classes;
-
 use src\helpers\Mensagem;
 use src\helpers\MensagemErro;
 
@@ -52,7 +51,6 @@ class Router
     {
         $URI = $_SERVER['REQUEST_URI'];
         $method = $_SERVER['REQUEST_METHOD'];
-
         $URI = str_replace('/api.biblioteca', '', $URI);
 
         foreach($this->routes as $route)
@@ -67,7 +65,8 @@ class Router
                 $arg = array_diff($argRequest, $argRoute);
                 
                 return $this->run($route['controller'], $route['methodController'], $arg);
-            }else if($route["route"] == $URI)
+            }
+            else if($route["route"] == $URI && $route["httpMethod"] == $method)
             {
                 return $this->run($route["controller"], $route["methodController"]);
             }

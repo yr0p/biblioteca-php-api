@@ -14,7 +14,7 @@ class Verifications
     }
     public function charsLimite($user, $password, $passwordConfirm, $email, $name)
     {
-        if((strlen($name) > 100) || (strlen($email) > 100) || (strlen($user) > 100) || (strlen($password) > 100) || (strlen($password) > 100))
+        if((strlen($name) > 100) || (strlen($email) > 100) || (strlen($user) > 100) || (strlen($password) > 100) || (strlen($password) > 100) || strlen($passwordConfirm) > 100)
         {
             Mensagem::mostrarMensagem(new MensagemErro, 400, "Alguns dos dados estão excedendo o limite de 100 caracteres!");
         }
@@ -26,7 +26,7 @@ class Verifications
     }
     public function password($password, $passwordConfirm = true)
     {
-        if($password <= 8 || $password != $passwordConfirm)
+        if(strlen($password) <= 8 || $password != $passwordConfirm)
         {
             Mensagem::mostrarMensagem(new MensagemErro, 400, "Dados Inválidos! User ou Password inválidos!");
         }

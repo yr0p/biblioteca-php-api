@@ -47,12 +47,11 @@ class UsuariosController
     }
     public function getUser()
     {
-        $headers = getallheaders();
-        $token = $headers['Authorization'];
-        $auth = new Auth();
-        $data = $auth->decode($token, getenv("SECRET"));
-        
-        echo $data["user"];
+        $data = json_decode(file_get_contents('php://input'), true);
 
+        $auth = new Auth();
+        $data = $auth->decode($data["Authorization"], getenv("SECRET"));
+
+        echo json_encode(["user" => $data->user]);
     }
 }
