@@ -27,7 +27,7 @@ class Usuario
     }
     public function update($usuario, $nome, $email, $senha)
     {
-        Connection::connect()->query("UPDATE usuarios SET usuario = '$usuario', nome = '$nome', email = '$email', senha = '$senha'");
+        Connection::connect()->query("UPDATE usuarios SET usuario = '$usuario', nome = '$nome', email = '$email', senha = '$senha' WHERE usuario = $usuario");
     }
     public function delete($usuario)
     {
