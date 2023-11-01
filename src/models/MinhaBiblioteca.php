@@ -24,11 +24,11 @@ class MinhaBiblioteca
             Mensagem::mostrarMensagem(new MensagemErro, 400, "Erro ao mandar para Minha Biblioteca!");
         }
     }
-    public function read($user)
+    public function read($user, $titulo)
     {   
         try
         {
-            $data = Connection::connect()->query("SELECT titulo FROM minha_biblioteca WHERE user = '$user'");
+            $data = Connection::connect()->query("SELECT * FROM minha_biblioteca WHERE user = '$user' AND titulo LIKE '%$titulo%'");
         }
         catch(Throwable $er)
         {
@@ -42,5 +42,20 @@ class MinhaBiblioteca
             Mensagem::mostrarMensagem(new MensagemErro, 400, "Livro não encontrado!");
         }
         return $data;
+    }
+    public function readOrderBy($user, $filtro)
+    {
+        try
+        {
+            return Connection::connect()->query("SELECT * FROM minha_biblioteca WHERE user = '$user' ORDER BY $filtro")->fetchAll(\PDO::FETCH_ASSOC);
+        }
+        catch(Throwable $er)
+        {
+            Mensagem::mostrarMensagem(new MensagemErro, 400, "Filtro não encontrado!");
+        }
+    }
+    public function delete($livro)
+    {
+        Connection::connect()->query("DELETE FROM minha_biblioteca WHERE cod_reserva = $livro");
     }
 }

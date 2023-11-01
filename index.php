@@ -14,7 +14,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 header('Access-Control-Allow-Origin: *');
-
 $dotenv = new Dotenv\Dotenv("src");
 $route = new Router();
 $cleanURL = URICleaner::cleanURL($_SERVER['REQUEST_URI']);
@@ -39,6 +38,9 @@ $route->delete('/livros/([a-zA-Z]+-?)+', 'LivrosController', 'deleteBook');
 
 $route->get('/minhaBiblioteca', 'MinhaBibliotecaController', 'meusLivros');
 $route->post('/minhaBiblioteca', 'MinhaBibliotecaController', 'reservar');
+$route->get('/minhaBiblioteca/([a-zA-Z]+-?)+', 'MinhaBibliotecaController', 'filterBy');
+$route->delete('/minhaBiblioteca', 'MinhaBibliotecaController', 'deleteBook');
+
 
 // Passando as requisições
 $route->matchRoute();
