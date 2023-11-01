@@ -4,6 +4,7 @@ namespace src\models;
 use src\helpers\Connection;
 use src\helpers\Mensagem;
 use src\helpers\MensagemErro;
+use Throwable;
 
 class Usuario
 {
@@ -17,23 +18,26 @@ class Usuario
         return Connection::connect()->query('INSERT INTO usuarios(nome, email, usuario, senha) VALUES("'. $nome. '", "'. $email . '", "' . $usuario . '", "'. $senha . '")');
 
     }
-    public function read($usuario, $senha)
+    public function read($usuario)
     {
-        $data = Connection::connect()->query('SELECT * FROM usuarios');
+        $data = Connection::connect()->query("SELECT * FROM usuarios WHERE usuario = '$usuario'");
         $data = $data->fetchAll(\PDO::FETCH_ASSOC);
-        $result = null;
-        foreach($data as $user)
-        {
-            if($user['usuario'] == $usuario && $user['senha'] == $senha)
-            {
-                $result = $user;
-            }
-        }
-        if($result == null)
-        {
-            Mensagem::mostrarMensagem(new MensagemErro, 400, "User ou Password não existe!");
-        }
-        return $result;
+
+        return $data;
     }
-    
+    public function update($usuario, $nome, $email, $senha)
+    {
+        Connection::connect()->query("UPDATE usuarios SET usuario = '$usuario', nome = '$nome', email = '$email', senha = '$senha'");
+    }
+    public function delete($usuario)
+    {
+        try
+        {
+            Connection::connect()->query("DELETE FROM usuarios WHERE usuario = '$usuario'");
+        }
+        catch(Throwable $er)
+        {
+            Mensagem::mostrarMensagem(new MensagemErro, 400, "Usuario não existe! Ou já foi excluido!");
+        }
+    }
 }

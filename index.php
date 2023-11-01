@@ -28,7 +28,10 @@ $route->get('/index.php', 'IndexController', 'welcome');
 $route->post('/register', 'UsuariosController', 'registerUser');
 $route->post('/auth', 'UsuariosController', 'login');
 
-$route->post('/user', 'UsuariosController', 'getUser');
+$route->post('/user', 'UsuariosController', 'userDecode');
+$route->get('/user', 'UsuariosController', 'getUser');
+$route->put('/user', 'UsuariosController', 'updateUser');
+$route->delete('/user', 'UsuariosController', 'deleteUser');
 
 $route->post('/registerBook', 'LivrosController', 'registerBook');
 $route->get('/livros', 'LivrosController', 'verLivros');
